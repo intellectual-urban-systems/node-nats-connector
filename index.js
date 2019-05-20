@@ -1,8 +1,13 @@
 const assert = require('assert')
 const NATS = require('nats')
-const { isFunction } = require('./src/utils')
+const {
+  isFunction,
+  isObject,
+  isString
+} = require('./lib/utils')
 
 const subscribeDefaultEvents = Symbol('subscribeDefaultEvents')
+const subscribeStartEvents = Symbol('subscribeStartEvents')
 
 class NatsConnector {
   #nats = null
@@ -18,6 +23,7 @@ class NatsConnector {
 
   constructor({
     address,
+    handlers,
     group,
     logger = console,
     isProduction
@@ -27,24 +33,41 @@ class NatsConnector {
     this.#group = group
     this.#nats = NATS.connect(address)
     this[subscribeDefaultEvents]()
+    this[subscribeStartEvents](handlers)
   }
 
   [subscribeDefaultEvents]() {
     this.#nats
       .on('connect', () => {
-        if (this.#isProduction) logger.log('NatsConnector connected!')
+        if (!this.#isProduction) this.#logger.log('NATS connected.')
       })
       .on('error', err => {
-        if (this.#isProduction) logger.error('NatsConnector error: ', err)
+        if (!this.#isProduction) this.#logger.error('NATS error: ', err)
       })
   }
 
-  subscribe(name, callback, group = this.#group) {
-    this.#nats.subscribe(name, { queue: group }, callback)
+  [subscribeStartEvents](handlers) {
+    if (isObject(handlers)) {
+      for (const [name, callback] of Object.entries(handlers)) {
+        this.subscribe(name, callback)
+      }
+    }
+  }
+
+  subscribe(name, callback, {
+    toGroup = true,
+    group = this.#group
+  } = {}) {
+    if (toGroup) {
+      this.#nats.subscribe(name, { queue: group }, callback)
+    } else {
+      this.#nats.subscribe(name, callback)
+    }
   }
 
   publish(name, payload) {
-    this.#nats.publish(name, payload)
+    if (!isString(payload)) payload = JSON.stringify(payload)
+    this.#nats.publish(`${this.#group}.${name}`, payload)
   }
 }
 

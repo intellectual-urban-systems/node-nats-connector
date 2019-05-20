@@ -5,17 +5,23 @@
 
 #### Usage
 ```js
+const handlers = {
+   'current_service_name.some_event': msg => {
+     console.log(`Received event: ${msg}`)
+   }
+ }
 const nats = require('nats-connector')({
   address: 'nats://localhost:4222',
   logger: console,
-  group: 'current_service_name'
+  group: 'current_service_name',
+  handlers
 })
 
-nats.subscribe('foo', msg => {
+nats.subscribe('some_event', msg => {
       console.log('Received a message: ' + msg)
     })
 
-nats.publish('foo', 'Hello World!')
+nats.publish('some_event', 'Hello World!')
 ```
 
 #### API
