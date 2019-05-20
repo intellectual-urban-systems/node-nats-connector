@@ -1,6 +1,6 @@
 const assert = require('assert')
 const NATS = require('nats')
-const { isFunction } = require('src/utils')
+const { isFunction } = require('./src/utils')
 
 const subscribeDefaultEvents = Symbol('subscribeDefaultEvents')
 
