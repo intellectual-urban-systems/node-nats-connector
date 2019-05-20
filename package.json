@@ -1,0 +1,29 @@
+{
+  "name": "nats-connector",
+  "version": "0.0.1",
+  "description": "wrapper for https://github.com/nats-io/nats.js",
+  "main": "index.js",
+  "repository": "git@github.com:intellectual-urban-systems/node-nats-connector.git",
+  "author": "Valerii Kuzivanov",
+  "license": "MIT",
+  "scripts": {
+    "go": "nodemon index.js"
+  },
+  "dependencies": {
+    "nats": "^1.2.10"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-html": "^5.0.5",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-promise": "^4.1.1"
+  },
+  "engines": {
+    "node" : ">=12.2"
+  }
+}

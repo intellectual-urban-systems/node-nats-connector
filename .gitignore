@@ -1,0 +1,15 @@
+logs
+node_modules/
+.npm
+.eslintcache
+*.tgz
+.yarn-integrity
+.env
+.vscode/
+.idea/
+**/.DS_Store
+**.log
+nohup.out
+.DS_Store
+data
+
