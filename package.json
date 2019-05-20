@@ -1,6 +1,6 @@
 {
   "name": "nats-connector",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "wrapper for https://github.com/nats-io/nats.js",
   "main": "index.js",
   "repository": "git@github.com:intellectual-urban-systems/node-nats-connector.git",
