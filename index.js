@@ -8,6 +8,7 @@ const {
 
 const subscribeDefaultEvents = Symbol('subscribeDefaultEvents')
 const subscribeStartEvents = Symbol('subscribeStartEvents')
+const cbHandler = Symbol('cbHandler')
 
 class NatsConnector {
   #nats = null
@@ -54,15 +55,22 @@ class NatsConnector {
     }
   }
 
-  subscribe(name, callback, {
+  [cbHandler](cb, msg, ...args) {
+    try {
+      msg = JSON.parse(msg)
+      cb(msg, ...args)
+    } catch (e) {
+      cb(...args)
+    }
+  }
+
+  subscribe(name, cb, {
     toGroup = true,
     group = this.#group
   } = {}) {
-    if (toGroup) {
-      this.#nats.subscribe(name, { queue: group }, callback)
-    } else {
-      this.#nats.subscribe(name, callback)
-    }
+    toGroup
+      ? this.#nats.subscribe(name, { queue: group }, (...args) => this[cbHandler](cb, ...args))
+      : this.#nats.subscribe(name, (...args) => this[cbHandler](cb, ...args))
   }
 
   publish(name, payload) {
