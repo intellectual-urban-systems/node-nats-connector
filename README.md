@@ -1,7 +1,7 @@
 # NATS connector. Class wrapper for https://github.com/nats-io/nats.js
 
 #### Install
-`yarn add yarn add https://github.com/intellectual-urban-systems/node-nats-connector`
+`npm i nats-connector` or `yarn add nats-connector`
 
 #### Usage
 ```js
