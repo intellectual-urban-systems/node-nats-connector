@@ -1,10 +1,6 @@
 const assert = require('assert')
 const NATS = require('nats')
-const {
-  isFunction,
-  isObject,
-  isString
-} = require('./lib/utils')
+const { isFunction, isObject } = require('./lib/utils')
 
 const subscribeDefaultEvents = Symbol('subscribeDefaultEvents')
 const subscribeStartEvents = Symbol('subscribeStartEvents')
@@ -32,7 +28,10 @@ class NatsConnector {
     this.#isProduction = isProduction || process.env.NODE_ENV === 'production'
     this.logger = logger
     this.#group = group
-    this.#nats = NATS.connect(address)
+    this.#nats = NATS.connect({
+      url: address,
+      json: true
+    })
     this[subscribeDefaultEvents]()
     this[subscribeStartEvents](handlers)
   }
@@ -55,12 +54,11 @@ class NatsConnector {
     }
   }
 
-  [cbHandler](cb, msg, ...args) {
+  async [cbHandler](cb, msg, ...args) {
     try {
-      msg = JSON.parse(msg)
-      cb(msg, ...args)
+      await cb(msg, ...args)
     } catch (e) {
-      cb(...args)
+      this.#logger.error(e)
     }
   }
 
@@ -74,7 +72,6 @@ class NatsConnector {
   }
 
   publish(name, payload) {
-    if (!isString(payload)) payload = JSON.stringify(payload)
     this.#nats.publish(`${this.#group}.${name}`, payload)
   }
 }
