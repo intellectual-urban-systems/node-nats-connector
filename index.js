@@ -74,6 +74,10 @@ class NatsConnector {
   publish(name, payload) {
     this.#nats.publish(`${this.#group}.${name}`, payload)
   }
+
+  emit(name, payload) {
+    this.#nats.publish(name, payload)
+  }
 }
 
 module.exports = config => new NatsConnector(config)
