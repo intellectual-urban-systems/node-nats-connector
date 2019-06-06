@@ -71,12 +71,25 @@ class NatsConnector {
       : this.#nats.subscribe(name, (...args) => this[cbHandler](cb, ...args))
   }
 
+  /**
+   * Publish event via event name
+   * @param name - event name
+   * @param {Object} payload - payload data
+   */
   publish(name, payload) {
     this.#nats.publish(`${this.#group}.${name}`, payload)
   }
 
-  emit(name, payload) {
-    this.#nats.publish(name, payload)
+  /**
+   * Emit event without group prefix and optional target prefix.
+   * @param {String} name - event name
+   * @param {Object} payload - payload data
+   * @param {String} [target] - optional target
+   */
+  emit(name, payload, target) {
+    target
+      ? this.#nats.publish(`${target}.${name}`, payload)
+      : this.#nats.publish(name, payload)
   }
 }
 
